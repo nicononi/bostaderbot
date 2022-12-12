@@ -1,0 +1,4 @@
+github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1 h1:wG8n/XJQ07TmjbITcGiUaOtXxdrINDz1b0J1w0SzqDc=
+github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1/go.mod h1:A2S0CWkNylc2phvKXWBBdD3K0iGnDBGbzRpISP2zBl8=
+github.com/nicononi/collections v0.0.0-20221210112014-ceeb86d8bf0c h1:eIa4xf7HdqbJmtUWq2CQ36H+suoyEfzSKRm2suo2Wms=
+github.com/nicononi/collections v0.0.0-20221210112014-ceeb86d8bf0c/go.mod h1:RFJT5C3lMX+rBske/oXNddccnaBb0SL3nB3FN3rLNvE=
