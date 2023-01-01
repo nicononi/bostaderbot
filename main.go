@@ -8,15 +8,28 @@ import (
 	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/nicononi/collections"
 )
 
 func main() {
-	if len(os.Args) == 1 {
-		fmt.Println("Need API Key!")
-		return
+	var apiKey string
+
+	// If API KEY not present in ENV, check arguments
+	fmt.Println("Checking Env API KEY")
+	if _, present := os.LookupEnv("API_KEY"); !present {
+		fmt.Println("Checking Argument")
+		if len(os.Args) == 1 {
+			fmt.Println("Need API Key!")
+			return
+		}
+
+		fmt.Println("Using API KEY from Argument")
+		apiKey = os.Args[1]
+	} else {
+		fmt.Println("Using Env API KEY")
+		apiKey = os.Getenv("API_KEY")
 	}
 
-	apiKey := os.Args[1]
 	bot, err := tgbotapi.NewBotAPI(apiKey)
 
 	if err != nil {
@@ -51,8 +64,10 @@ func main() {
 			msg.Text = "I understand /list /latest and /clean."
 		case "list":
 			msg.Text = handleListAll(update.Message.CommandArguments())
-		case "status":
-			msg.Text = "Work in progress :)"
+		case "latest":
+			msg.Text = handleList(update.Message.CommandArguments())
+		case "clean":
+			msg.Text = handleClear()
 		default:
 			msg.Text = "I don't know that command"
 		}
@@ -63,12 +78,43 @@ func main() {
 	}
 }
 
-func handleList() {
+func handleList(commandArguments string) string {
+	rooms, err := strconv.ParseFloat(commandArguments, 32)
 
+	if err != nil {
+		return "Could not understand number of rooms"
+	}
+
+	allApartments := apartments.GetApartments()
+	filteredRooms := apartments.GetFilteredApartments(allApartments, rooms)
+
+	unscannedApartments := new(collections.SliceList[apartments.Apartment])
+	scannedIds := new(collections.SliceList[int])
+
+	// Check visited apartments
+	for _, v := range filteredRooms.Elements() {
+		if !scannedIds.Contains(v.Id) {
+			unscannedApartments.Append(v)
+		}
+	}
+
+	if unscannedApartments.Size() == 0 {
+		return "There are no new apartments with " + fmt.Sprintf("%.1f", rooms) + " rooms"
+	}
+
+	var result string = "Current new apartments are: \n\n"
+
+	for _, v := range unscannedApartments.Elements() {
+		result = result + v.State + ", " + v.Kommun + "\n" + v.Address + "\n" + fmt.Sprintf("%.1f", v.Rooms)
+		result = result + " rooms\n" + strconv.Itoa(v.Size) + " sqr\n" + strconv.Itoa(v.Price) + " sek\n" + apartments.BaseUri + v.Uri + "\n\n"
+	}
+
+	result = result + "Thanks, Bot"
+	return result
 }
 
-func handleClear() {
-
+func handleClear() string {
+	return "Work in progress :)"
 }
 
 func handleListAll(commandArguments string) string {
