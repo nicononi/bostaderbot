@@ -4,6 +4,7 @@ import (
 	"bostaderbot/apartments"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	go startServer()
+
 	var apiKey string
 
 	// If API KEY not present in ENV, check arguments
@@ -75,6 +78,13 @@ func main() {
 		if _, err := bot.Send(msg); err != nil {
 			log.Panic(err)
 		}
+	}
+}
+
+func startServer() {
+	fmt.Println("Starting server at port 8080")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal(err)
 	}
 }
 
