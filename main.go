@@ -1,15 +1,12 @@
 package main
 
 import (
-	"bostaderbot/apartments"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/nicononi/collections"
 )
 
 func main() {
@@ -68,9 +65,9 @@ func main() {
 		case "list":
 			msg.Text = handleListAll(update.Message.CommandArguments())
 		case "latest":
-			msg.Text = handleList(update.Message.CommandArguments())
+			msg.Text = handleList(update.Message.Chat.ID, update.Message.CommandArguments())
 		case "clean":
-			msg.Text = handleClear()
+			msg.Text = handleClear(update.Message.Chat.ID)
 		default:
 			msg.Text = "I don't know that command"
 		}
@@ -81,73 +78,10 @@ func main() {
 	}
 }
 
+// This is needed by Cloud Run to keep the Pods running
 func startServer() {
 	fmt.Println("Starting server at port 8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func handleList(commandArguments string) string {
-	rooms, err := strconv.ParseFloat(commandArguments, 32)
-
-	if err != nil {
-		return "Could not understand number of rooms"
-	}
-
-	allApartments := apartments.GetApartments()
-	filteredRooms := apartments.GetFilteredApartments(allApartments, rooms)
-
-	unscannedApartments := new(collections.SliceList[apartments.Apartment])
-	scannedIds := new(collections.SliceList[int])
-
-	// Check visited apartments
-	for _, v := range filteredRooms.Elements() {
-		if !scannedIds.Contains(v.Id) {
-			unscannedApartments.Append(v)
-		}
-	}
-
-	if unscannedApartments.Size() == 0 {
-		return "There are no new apartments with " + fmt.Sprintf("%.1f", rooms) + " rooms"
-	}
-
-	var result string = "Current new apartments are: \n\n"
-
-	for _, v := range unscannedApartments.Elements() {
-		result = result + v.State + ", " + v.Kommun + "\n" + v.Address + "\n" + fmt.Sprintf("%.1f", v.Rooms)
-		result = result + " rooms\n" + strconv.Itoa(v.Size) + " sqr\n" + strconv.Itoa(v.Price) + " sek\n" + apartments.BaseUri + v.Uri + "\n\n"
-	}
-
-	result = result + "Thanks, Bot"
-	return result
-}
-
-func handleClear() string {
-	return "Work in progress :)"
-}
-
-func handleListAll(commandArguments string) string {
-	rooms, err := strconv.ParseFloat(commandArguments, 32)
-
-	if err != nil {
-		return "Could not understand number of rooms"
-	}
-
-	allApartments := apartments.GetApartments()
-	filteredRooms := apartments.GetFilteredApartments(allApartments, rooms)
-
-	if filteredRooms.Size() == 0 {
-		return "There are no apartments with " + fmt.Sprintf("%.1f", rooms) + " rooms"
-	}
-
-	var result string = "Current apartments are: \n\n"
-
-	for _, v := range filteredRooms.Elements() {
-		result = result + v.State + ", " + v.Kommun + "\n" + v.Address + "\n" + fmt.Sprintf("%.1f", v.Rooms)
-		result = result + " rooms\n" + strconv.Itoa(v.Size) + " sqr\n" + strconv.Itoa(v.Price) + " sek\n" + apartments.BaseUri + v.Uri + "\n\n"
-	}
-
-	result = result + "Thanks, Bot"
-	return result
 }

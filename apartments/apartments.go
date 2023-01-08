@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"log"
-	"math"
 	"net/http"
 
 	"github.com/nicononi/collections"
@@ -53,10 +52,10 @@ func GetApartments() collections.List[Apartment] {
 	return result
 }
 
-func GetFilteredApartments(apartments collections.List[Apartment], roomsNumber float64) collections.List[Apartment] {
+func GetFilteredApartments(apartments collections.List[Apartment], roomsNumber int) collections.List[Apartment] {
 	r := new(collections.SliceList[Apartment])
 	for _, v := range apartments.Elements() {
-		if math.Trunc(v.Rooms) == math.Trunc(roomsNumber) && v.Normal {
+		if int(v.Rooms) == roomsNumber && v.Normal {
 			r.Append(v)
 		}
 	}
