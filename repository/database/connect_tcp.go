@@ -30,7 +30,6 @@ func connectTCPSocket() (*sql.DB, error) {
 	dbURI := fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s",
 		dbTCPHost, dbUser, dbPwd, dbPort, dbName)
 
-	// [END cloud_sql_postgres_databasesql_connect_tcp]
 	// (OPTIONAL) Configure SSL certificates
 	// For deployments that connect directly to a Cloud SQL instance without
 	// using the Cloud SQL Proxy, configuring SSL certificates will ensure the
@@ -43,7 +42,6 @@ func connectTCPSocket() (*sql.DB, error) {
 		dbURI += fmt.Sprintf(" sslmode=require sslrootcert=%s sslcert=%s sslkey=%s",
 			dbRootCert, dbCert, dbKey)
 	}
-	// [START cloud_sql_postgres_databasesql_connect_tcp]
 
 	// dbPool is the pool of database connections.
 	dbPool, err := sql.Open("pgx", dbURI)
@@ -51,9 +49,9 @@ func connectTCPSocket() (*sql.DB, error) {
 		return nil, fmt.Errorf("sql.Open: %v", err)
 	}
 
-	// [START_EXCLUDE]
+	defer dbPool.Close()
+
 	configureConnectionPool(dbPool)
-	// [END_EXCLUDE]
 
 	return dbPool, nil
 }

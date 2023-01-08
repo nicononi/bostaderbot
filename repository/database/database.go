@@ -63,26 +63,9 @@ func mustConnect() *sql.DB {
 // configureConnectionPool sets database connection pool properties.
 // For more information, see https://golang.org/pkg/database/sql
 func configureConnectionPool(db *sql.DB) {
-	// [START cloud_sql_postgres_databasesql_limit]
-	// Set maximum number of connections in idle connection pool.
 	db.SetMaxIdleConns(5)
-
-	// Set maximum number of open connections to the database.
 	db.SetMaxOpenConns(7)
-	// [END cloud_sql_postgres_databasesql_limit]
-
-	// [START cloud_sql_postgres_databasesql_lifetime]
-	// Set Maximum time (in seconds) that a connection can remain open.
 	db.SetConnMaxLifetime(1800 * time.Second)
-	// [END cloud_sql_postgres_databasesql_lifetime]
-
-	// [START cloud_sql_postgres_databasesql_backoff]
-	// database/sql does not support specifying backoff
-	// [END cloud_sql_postgres_databasesql_backoff]
-	// [START cloud_sql_postgres_databasesql_timeout]
-	// The database/sql package currently doesn't offer any functionality to
-	// configure connection timeout.
-	// [END cloud_sql_postgres_databasesql_timeout]
 }
 
 // migrateDB creates the votes table if it does not already exist.
