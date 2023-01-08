@@ -49,6 +49,8 @@ func connectWithConnector() (*sql.DB, error) {
 		return nil, err
 	}
 
+	defer d.Close()
+
 	// Use the Cloud SQL connector to handle connecting to the instance.
 	// This approach does *NOT* require the Cloud SQL proxy.
 	config.DialFunc = func(ctx context.Context, network, instance string) (net.Conn, error) {

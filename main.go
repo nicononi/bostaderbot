@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bostaderbot/repository/database"
 	"fmt"
 	"log"
 	"net/http"
@@ -76,6 +77,8 @@ func main() {
 			log.Panic(err)
 		}
 	}
+
+	defer database.GetDB().Close()
 }
 
 // This is needed by Cloud Run to keep the Pods running

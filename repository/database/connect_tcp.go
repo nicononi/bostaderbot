@@ -49,8 +49,6 @@ func connectTCPSocket() (*sql.DB, error) {
 		return nil, fmt.Errorf("sql.Open: %v", err)
 	}
 
-	defer dbPool.Close()
-
 	configureConnectionPool(dbPool)
 
 	return dbPool, nil
