@@ -62,6 +62,5 @@ func connectWithConnector() (*sql.DB, error) {
 		return nil, fmt.Errorf("sql.Open: %v", err)
 	}
 
-	defer dbPool.Close()
 	return dbPool, nil
 }
