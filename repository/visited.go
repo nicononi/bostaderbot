@@ -119,7 +119,8 @@ func GetRegisteredChats() (collections.List[Registered], error) {
 	rows, err := db.Query(`SELECT v.chat_id, v.rooms 
 	FROM registered AS r 
 	INNER JOIN visited AS v on r.chat_id = v.chat_id
-	GROUP BY v.chat_id, v.rooms`)
+	GROUP BY v.chat_id, v.rooms
+	ORDER BY v.rooms ASC`)
 
 	if err != nil {
 		return nil, fmt.Errorf("DB.Query: %v", err)

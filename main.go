@@ -126,7 +126,7 @@ func notify(w http.ResponseWriter, r *http.Request) {
 				// Create a new MessageConfig. We don't have text yet,
 				// so we leave it empty.
 				msg := tgbotapi.NewMessage(v.ChatId, "")
-				msg.Text = commands.HandleListDelta(v.ChatId, v.Rooms)
+				msg.Text = "Daily update: " + commands.HandleListDelta(v.ChatId, v.Rooms)
 				if _, err := bot.Send(msg); err != nil {
 					log.Panic(err)
 				}
