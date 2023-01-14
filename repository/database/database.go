@@ -68,7 +68,7 @@ func configureConnectionPool(db *sql.DB) {
 	db.SetConnMaxLifetime(1800 * time.Second)
 }
 
-// migrateDB creates the votes table if it does not already exist.
+// migrateDB creates the visited and registered tables if they do not already exist.
 func migrateDB(db *sql.DB) error {
 	createVisited := `CREATE TABLE IF NOT EXISTS visited (
 		chat_id NUMERIC NOT NULL,
@@ -77,5 +77,15 @@ func migrateDB(db *sql.DB) error {
 		PRIMARY KEY (chat_id, rooms, apartment_id)
 	);`
 	_, err := db.Exec(createVisited)
-	return err
+
+	if err != nil {
+		return err
+	}
+
+	createRegistered := `CREATE TABLE IF NOT EXISTS registered (
+		chat_id NUMERIC UNIQUE NOT NULL,
+		PRIMARY KEY (chat_id)
+	);`
+	_, err2 := db.Exec(createRegistered)
+	return err2
 }

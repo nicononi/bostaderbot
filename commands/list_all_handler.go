@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"bostaderbot/apartments"
@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func handleListAll(commandArguments string) string {
+func HandleListAllCmd(commandArguments string) string {
 	rooms, err := strconv.Atoi(commandArguments)
 
 	if err != nil {

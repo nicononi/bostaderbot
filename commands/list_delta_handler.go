@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"bostaderbot/apartments"
@@ -10,13 +10,18 @@ import (
 )
 
 // Function to handle the Delta command
-func handleList(chatId int64, commandArguments string) string {
+func HandleListDeltaCmd(chatId int64, commandArguments string) string {
 	rooms, err := strconv.Atoi(commandArguments)
 
 	if err != nil {
 		return "Could not understand number of rooms"
 	}
 
+	return HandleListDelta(chatId, rooms)
+}
+
+// Function to handle the Delta command
+func HandleListDelta(chatId int64, rooms int) string {
 	allApartments := apartments.GetApartments()
 	filteredRooms := apartments.GetFilteredApartments(allApartments, rooms)
 
